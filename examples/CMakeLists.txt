@@ -12,3 +12,9 @@ target_link_libraries( run_dso_euroc
 add_executable( run_dso_kitti run_dso_kitti.cc )
 target_link_libraries( run_dso_kitti
   ldso ${THIRD_PARTY_LIBS} )
+
+# 添加
+# KaistUrabn dataset
+add_executable( run_dso_kasiturban run_dso_kasiturban.cc )
+target_link_libraries( run_dso_kasiturban
+  ldso ${THIRD_PARTY_LIBS} )
