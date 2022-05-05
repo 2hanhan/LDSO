@@ -1,3 +1,4 @@
+.vscode*
 # IDE files
 **/.idea
 **/CMakeLists.txt.user
