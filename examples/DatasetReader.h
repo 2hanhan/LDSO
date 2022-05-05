@@ -110,6 +110,7 @@ public:
 
         if (datasetType == TUM_MONO)
         {
+            //可以从zip中读取文件
             if (isZipped)
             {
 #if HAS_ZIPLIB

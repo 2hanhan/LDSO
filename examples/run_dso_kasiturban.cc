@@ -324,7 +324,7 @@ int main(int argc, char **argv)
     setting_affineOptModeA = 0; //-1: fix. >=0: optimize (with prior, if > 0).
     setting_affineOptModeB = 0; //-1: fix. >=0: optimize (with prior, if > 0).
 
-    // 创建用于数据读取的class
+    // 创建用于读取数据集、相机模型的class
     shared_ptr<ImageFolderReader> reader(
         new ImageFolderReader(ImageFolderReader::KAIST, source, calib, "", "")); // no gamma and vignette
 
@@ -409,7 +409,7 @@ int main(int argc, char **argv)
 
             int i = idsToPlay[ii];
 
-            ImageAndExposure *img;
+            ImageAndExposure *img;//每次输入的一帧图像
             if (preload)
                 img = preloadedImages[ii];
             else
@@ -430,7 +430,7 @@ int main(int argc, char **argv)
                     skipFrame = true;
                 }
             }
-            if (!skipFrame) fullSystem->addActiveFrame(img, i);
+            if (!skipFrame) fullSystem->addActiveFrame(img, i);//将图像帧输入到LDSO系统中
             delete img;
 
             if (fullSystem->initFailed || setting_fullResetRequested) {

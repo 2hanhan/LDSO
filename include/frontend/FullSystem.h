@@ -27,7 +27,8 @@ using namespace ldso::internal;
 
 const int MAX_ACTIVE_FRAMES = 100;
 
-namespace ldso {
+namespace ldso
+{
 
     class CoarseTracker;
 
@@ -37,7 +38,8 @@ namespace ldso {
 
     class CoarseDistanceMap;
 
-    namespace internal {
+    namespace internal
+    {
         class PointFrameResidual;
 
         class ImmaturePoint;
@@ -51,7 +53,8 @@ namespace ldso {
      * FullSystem is the top-level interface of DSO system
      * call addActiveFrame to track an image
      */
-    class FullSystem {
+    class FullSystem
+    {
 
     public:
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
@@ -93,22 +96,25 @@ namespace ldso {
         bool loadAll(const string &filename);
 
         // state variables
-        bool isLost = false;        // if system is lost, note that dso CANNOT recover from lost
-        bool initFailed = false;    // initialization failed?
-        bool initialized = false;   // initialized?
+        bool isLost = false;            // if system is lost, note that dso CANNOT recover from lost
+        bool initFailed = false;        // initialization failed?
+        bool initialized = false;       // initialized?
         bool linearizeOperation = true; // this is something controls if the optimization runs in a single thread,
         // but why it is called linerizeOperation...?
 
-        shared_ptr<CoarseDistanceMap> GetDistanceMap() {
+        shared_ptr<CoarseDistanceMap> GetDistanceMap()
+        {
             return coarseDistanceMap;
         }
 
-        vector<shared_ptr<Frame>> GetActiveFrames() {
+        vector<shared_ptr<Frame>> GetActiveFrames()
+        {
             unique_lock<mutex> lck(framesMutex);
             return frames;
         }
 
-        void RefreshGUI() {
+        void RefreshGUI()
+        {
             if (viewer)
                 viewer->refreshAll();
         }
@@ -264,7 +270,7 @@ namespace ldso {
                          float b);
 
     public:
-        shared_ptr<Camera> Hcalib = nullptr;    // calib information
+        shared_ptr<Camera> Hcalib = nullptr; // calib information //标定信息
 
     private:
         // data
@@ -272,22 +278,22 @@ namespace ldso {
         mutex trackMutex;
         shared_ptr<CoarseInitializer> coarseInitializer = nullptr;
         Vec5 lastCoarseRMSE;
-        vector<shared_ptr<Frame>> allFrameHistory;      // all recorded frames
+        vector<shared_ptr<Frame>> allFrameHistory; // all recorded frames
 
         // ================== changed by mapper-thread. protected by mapMutex ===============
         mutex mapMutex;
 
         // =================================================================================== //
-        shared_ptr<EnergyFunctional> ef = nullptr;        // optimization
-        IndexThreadReduce<Vec10> threadReduce;            // multi thread reducing
+        shared_ptr<EnergyFunctional> ef = nullptr; // optimization
+        IndexThreadReduce<Vec10> threadReduce;     // multi thread reducing
 
-        shared_ptr<CoarseDistanceMap> coarseDistanceMap = nullptr;  // coarse distance map
-        shared_ptr<PixelSelector> pixelSelector = nullptr;          // pixel selector
-        float *selectionMap = nullptr;                              // selection map
+        shared_ptr<CoarseDistanceMap> coarseDistanceMap = nullptr; // coarse distance map
+        shared_ptr<PixelSelector> pixelSelector = nullptr;         // pixel selector
+        float *selectionMap = nullptr;                             // selection map
 
         // all frames
-        std::vector<shared_ptr<Frame>> frames;    // all active frames, ONLY changed in marginalizeFrame and addFrame.
-        mutex framesMutex;  // mutex to lock frame read and write because other places will use this information
+        std::vector<shared_ptr<Frame>> frames; // all active frames, ONLY changed in marginalizeFrame and addFrame.
+        mutex framesMutex;                     // mutex to lock frame read and write because other places will use this information
 
         // active residuals
         std::vector<shared_ptr<PointFrameResidual>> activeResiduals;
@@ -296,9 +302,9 @@ namespace ldso {
         std::vector<float> allResVec;
 
         // mutex etc. for tracker exchange.
-        mutex coarseTrackerSwapMutex;            // if tracker sees that there is a new reference, tracker locks [coarseTrackerSwapMutex] and swaps the two.
-        shared_ptr<CoarseTracker> coarseTracker_forNewKF = nullptr;            // set as as reference. protected by [coarseTrackerSwapMutex].
-        shared_ptr<CoarseTracker> coarseTracker = nullptr;                    // always used to track new frames. protected by [trackMutex].
+        mutex coarseTrackerSwapMutex;                               // if tracker sees that there is a new reference, tracker locks [coarseTrackerSwapMutex] and swaps the two.
+        shared_ptr<CoarseTracker> coarseTracker_forNewKF = nullptr; // set as as reference. protected by [coarseTrackerSwapMutex].
+        shared_ptr<CoarseTracker> coarseTracker = nullptr;          // always used to track new frames. protected by [trackMutex].
 
         mutex shellPoseMutex;
 
@@ -307,23 +313,24 @@ namespace ldso {
         condition_variable trackedFrameSignal;
         condition_variable mappedFrameSignal;
         deque<shared_ptr<Frame>> unmappedTrackedFrames;
-        int needNewKFAfter = -1;    // Otherwise, a new KF is *needed that has ID bigger than [needNewKFAfter]*.
+        int needNewKFAfter = -1; // Otherwise, a new KF is *needed that has ID bigger than [needNewKFAfter]*.
 
         thread mappingThread;
         bool runMapping = true;
         bool needToKetchupMapping = false;
 
     public:
-        shared_ptr<Map> globalMap = nullptr;    // global map
-        FeatureDetector detector;   // feature detector
+        shared_ptr<Map> globalMap = nullptr; // global map
+        FeatureDetector detector;            // feature detector
         // ========================== loop closing ==================================== //
     public:
-        shared_ptr<ORBVocabulary> vocab = nullptr;  // vocabulary
-        shared_ptr<LoopClosing> loopClosing = nullptr;  // loop closing
+        shared_ptr<ORBVocabulary> vocab = nullptr;     // vocabulary
+        shared_ptr<LoopClosing> loopClosing = nullptr; // loop closing
 
         // ========================= visualization =================================== //
     public:
-        void setViewer(shared_ptr<PangolinDSOViewer> v) {
+        void setViewer(shared_ptr<PangolinDSOViewer> v)
+        {
             viewer = v;
             if (viewer)
                 viewer->setMap(globalMap);
